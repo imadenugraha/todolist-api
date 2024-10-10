@@ -15,6 +15,4 @@ Route::controller(AuthController::class)->group(function () {
     Route::post('/logout', 'logout')->middleware('auth:sanctum')->name('logout');
 });
 
-Route::resource('todo', TodoController::class)
-    ->only(['store', 'show', 'update', 'destroy'])
-    ->middleware('auth:sanctum');
+Route::apiResource('todo', TodoController::class)->middleware('auth:sanctum');
