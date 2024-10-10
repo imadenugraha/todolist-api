@@ -13,10 +13,10 @@ class TodoController extends Controller
      */
     public function index()
     {
-        $todos = Todo::where('user_id', user()->id());
+        $todos = Todo::where('user_id', Auth::id())->get();
 
         return response()->json([
-            'todos' => $todos,
+            "todos" => $todos
         ]);
     }
 
@@ -49,6 +49,12 @@ class TodoController extends Controller
      */
     public function show(Todo $todo)
     {
+        if(Auth::id() != $todo->user_id) {
+            return response()->json([
+                "message" => "Nothing to see..."
+            ], 404);
+        }
+
         return response()->json([
             'todo' => $todo,
         ]);
@@ -72,7 +78,7 @@ class TodoController extends Controller
             'is_completed' => ['sometimes', 'boolean'],
         ]);
 
-        $todo->update(array_filter($request->only(['name', 'is_completed'])));
+        $todo->update($request->only('name', 'is_completed'));
 
         return response()->json([
             'message' => 'Task updated!'
