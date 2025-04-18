@@ -38,6 +38,9 @@ WORKDIR /var/www
 
 COPY . .
 
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
 RUN mkdir -p /var/www/storage/app \
     /var/www/storage/framework/cache \
     /var/www/storage/framework/sessions \
@@ -53,4 +56,4 @@ EXPOSE 9804
 HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
     CMD wget -qO- http://localhost:9804/health || exit 1
 
-ENTRYPOINT [ "php", "artisan", "octane:frankenphp" ]
+ENTRYPOINT [ "entrypoint.sh" ]
