@@ -43,7 +43,7 @@ RUN mkdir -p /var/www/storage/app \
     /var/www/storage/framework/sessions \
     /var/www/storage/framework/views \
     /var/www/storage/logs \
-    && chown -R appuser:appuser /var/www/storage \
+    && chown -R appuser:appuser /var/www/storage /var/www/bootstrap/cache \
     && chmod -R 775 /var/www/storage /var/www/bootstrap/cache
 
 USER appuser
