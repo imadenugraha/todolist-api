@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 echo "📦 Running migration"
 cd /var/www && php artisan migrate --force
