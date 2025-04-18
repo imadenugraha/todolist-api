@@ -37,6 +37,8 @@ RUN { \
 
 WORKDIR /var/www
 
+COPY . .
+
 RUN mkdir -p /var/www/storage/app \
     /var/www/storage/framework/cache \
     /var/www/storage/framework/sessions \
