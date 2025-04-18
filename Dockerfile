@@ -17,8 +17,7 @@ RUN addgroup -g 1000 appuser && \
 COPY --from=build /app /var/www
 
 COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
-RUN install-php-extensions bcmath gd intl memcached pdo_pgsql pgsql zip curl fileinfo mbstring \
-    xml ctype filter hash openssl pcre pdo session tokenizer libxml
+RUN install-php-extensions bcmath gd intl memcached pdo_pgsql pgsql zip
 
 ARG FRANKENPHP_VERSION=1.5.0
 RUN curl -sSL https://github.com/dunglas/frankenphp/releases/download/v${FRANKENPHP_VERSION}/frankenphp-linux-x86_64 -o /usr/local/bin/frankenphp \
