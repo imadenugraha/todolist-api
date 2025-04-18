@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -xe
+
 echo "📦 Running migration"
 cd /var/www && php artisan migrate --force
 
