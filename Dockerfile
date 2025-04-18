@@ -34,12 +34,12 @@ RUN { \
     echo 'opcache.jit_buffer_size=100M'; \
     } > /usr/local/etc/php/conf.d/opcache-recommended.ini
 
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
 WORKDIR /var/www
 
 COPY . .
-
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
 
 RUN mkdir -p /var/www/storage/app \
     /var/www/storage/framework/cache \
