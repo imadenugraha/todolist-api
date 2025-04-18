@@ -11,8 +11,8 @@ RUN composer install --no-dev --optimize-autoloader --no-scripts --no-interactio
 
 FROM php:8.3-alpine AS production
 
-RUN addgroup appuser && \
-    adduser -G appuser -s /bin/sh -D appuser
+RUN addgroup -g 1000 appuser && \
+    adduser -u 1000 -G appuser -s /bin/sh -D appuser
 
 COPY --from=build /app /var/www
 
