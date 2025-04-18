@@ -1,0 +1,30 @@
+---
+services:
+    web:
+        image: imadenjp/todolist-api:test-v1
+        ports:
+            - "9804:9804"
+        networks:
+            - todolist_net
+        command: php artisan migrate --force
+        volumes:
+            - "./.env:/var/www/.env:ro"
+            - "./storage:/var/www/storage"
+        depends_on:
+            - db
+        container_name: todolist_app
+    db:
+        image: postgres:16-alpine
+        shm_size: 128M
+        networks:
+            - todolist_net
+        environment:
+            - POSTGRES_DB=todolist
+            - POSTGRES_USER=app
+            - POSTGRES_PASSWORD=app123*#
+            - POSTGRES_HOST_AUTH_METHOD=md5
+        container_name: todolist_db
+
+networks:
+    todolist_net:
+        driver: bridge
