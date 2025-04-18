@@ -53,4 +53,4 @@ EXPOSE 9804
 HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
     CMD wget -qO- http://localhost:9804/health || exit 1
 
-ENTRYPOINT [ "php", "artisan", "octane:frankenphp", "--port=9804", "--workers=10", "--host=0.0.0.0" ]
+ENTRYPOINT [ "php", "artisan", "octane:frankenphp" ]
