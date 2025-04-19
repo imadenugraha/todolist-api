@@ -24,14 +24,16 @@ RUN apk add --no-cache curl && \
     chmod +x /usr/local/bin/frankenphp && \
     apk del curl
 
-RUN echo "opcache.memory_consumption=128\n\
-    opcache.interned_strings_buffer=8\n\
-    opcache.max_accelerated_files=4000\n\
-    opcache.revalidate_freq=0\n\
-    opcache.fast_shutdown=1\n\
-    opcache.enable_cli=1\n\
-    opcache.jit=1255\n\
-    opcache.jit_buffer_size=100M" > /usr/local/etc/php/conf.d/opcache-recommended.ini
+RUN cat <<EOF > /usr/local/etc/php/conf.d/opcache-recommended.ini
+opcache.memory_consumption=128
+opcache.interned_strings_buffer=8
+opcache.max_accelerated_files=4000
+opcache.revalidate_freq=0
+opcache.fast_shutdown=1
+opcache.enable_cli=1
+opcache.jit=1255
+opcache.jit_buffer_size=100M
+EOF
 
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
