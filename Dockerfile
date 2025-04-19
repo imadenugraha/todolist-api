@@ -3,11 +3,10 @@ FROM php:8.3-alpine AS build
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 
 WORKDIR /app
+COPY . .
 
-COPY composer.json composer.lock ./
-RUN apk add --no-cache jq curl
-
-RUN composer install --no-dev --optimize-autoloader --no-scripts --no-interaction --prefer-dist
+RUN apk add --no-cache jq curl && \
+    composer install --no-dev --optimize-autoloader --no-scripts --no-interaction --prefer-dist
 
 FROM php:8.3-alpine AS production
 
@@ -20,34 +19,32 @@ COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr
 RUN install-php-extensions bcmath gd intl memcached pdo_pgsql pgsql zip pcntl
 
 ARG FRANKENPHP_VERSION=1.5.0
-RUN curl -sSL https://github.com/dunglas/frankenphp/releases/download/v${FRANKENPHP_VERSION}/frankenphp-linux-x86_64 -o /usr/local/bin/frankenphp \
-    && chmod +x /usr/local/bin/frankenphp
+RUN apk add --no-cache curl && \
+    curl -sSL https://github.com/dunglas/frankenphp/releases/download/v${FRANKENPHP_VERSION}/frankenphp-linux-x86_64 -o /usr/local/bin/frankenphp && \
+    chmod +x /usr/local/bin/frankenphp && \
+    apk del curl
 
-RUN { \
-    echo 'opcache.memory_consumption=128'; \
-    echo 'opcache.interned_strings_buffer=8'; \
-    echo 'opcache.max_accelerated_files=4000'; \
-    echo 'opcache.revalidate_freq=0'; \
-    echo 'opcache.fast_shutdown=1'; \
-    echo 'opcache.enable_cli=1'; \
-    echo 'opcache.jit=1255'; \
-    echo 'opcache.jit_buffer_size=100M'; \
-    } > /usr/local/etc/php/conf.d/opcache-recommended.ini
+RUN echo "opcache.memory_consumption=128\n\
+    opcache.interned_strings_buffer=8\n\
+    opcache.max_accelerated_files=4000\n\
+    opcache.revalidate_freq=0\n\
+    opcache.fast_shutdown=1\n\
+    opcache.enable_cli=1\n\
+    opcache.jit=1255\n\
+    opcache.jit_buffer_size=100M" > /usr/local/etc/php/conf.d/opcache-recommended.ini
 
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
 
 WORKDIR /var/www
 
-COPY . .
-
-RUN mkdir -p /var/www/storage/app \
-    /var/www/storage/framework/cache \
-    /var/www/storage/framework/sessions \
-    /var/www/storage/framework/views \
-    /var/www/storage/logs \
-    && chown -R appuser:appuser /var/www/storage /var/www/bootstrap/cache /var/www/public \
-    && chmod -R 775 /var/www/storage /var/www/bootstrap/cache /var/www/public
+RUN mkdir -p storage/app \
+    storage/framework/cache \
+    storage/framework/sessions \
+    storage/framework/views \
+    storage/logs \
+    && chown -R appuser:appuser storage bootstrap/cache public \
+    && chmod -R 775 storage bootstrap/cache public
 
 USER appuser
 
@@ -56,4 +53,4 @@ EXPOSE 9804
 HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
     CMD wget -qO- http://localhost:9804/up || exit 1
 
-ENTRYPOINT [ "/entrypoint.sh" ]
+ENTRYPOINT [ "/usr/local/bin/entrypoint.sh" ]
