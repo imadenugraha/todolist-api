@@ -45,3 +45,7 @@ yarn-error.log
 /.vscode
 /.zed
 >>>>>>> e10edca (Initial Commit)
+
+**/caddy
+frankenphp
+frankenphp-worker.php
